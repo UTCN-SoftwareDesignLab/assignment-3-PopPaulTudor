@@ -9,15 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
-import static com.lab4.demo.UrlMapping.ENTITY;
-import static com.lab4.demo.UrlMapping.PATIENTS;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class PatientServiceTest {
 
@@ -29,7 +24,6 @@ class PatientServiceTest {
 
     @Mock
     private PatientMapper patientMapper;
-
 
 
     @BeforeEach
@@ -53,7 +47,7 @@ class PatientServiceTest {
     @Test
     void create() {
         PatientDTO patientDTO = TestCreationFactory.object(PatientDTO.class);
-        Patient patient= patientMapper.fromDto(patientDTO);
+        Patient patient = patientMapper.fromDto(patientDTO);
 
         when(patientMapper.fromDto(patientDTO)).thenReturn(patient);
         when(patientMapper.toDto(patient)).thenReturn(patientDTO);

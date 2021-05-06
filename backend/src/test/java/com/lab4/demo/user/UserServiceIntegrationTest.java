@@ -33,7 +33,7 @@ class UserServiceIntegrationTest {
         List<User> users = TestCreationFactory.listOf(User.class);
         userRepository.saveAll(users);
 
-        List<UserDTO> userMinimalDTOS = userService.allUsersForList();
+        List<UserDTO> userMinimalDTOS = userService.allUsers();
 
         Assertions.assertEquals(userMinimalDTOS.size(), users.size());
     }
@@ -44,7 +44,7 @@ class UserServiceIntegrationTest {
         List<User> users = TestCreationFactory.listOf(User.class);
         userRepository.saveAll(users);
 
-        List<UserDTO> userMinimalDTOS = userService.allUsersForList();
+        List<UserDTO> userMinimalDTOS = userService.allUsers();
         Assertions.assertEquals(userMinimalDTOS.size(), users.size());
     }
 
@@ -52,7 +52,7 @@ class UserServiceIntegrationTest {
     @Test
     void delete(){
         List<User> users = TestCreationFactory.listOf(User.class);
-        UserDTO userInserted = userService.create(userMapper.toUserDTO(users.get(0)));
+        UserDTO userInserted = userService.create(userMapper.toUserDTO(users.get(0)), "secretary");
         userService.delete(userInserted.getId());
         assertFalse(userRepository.findById(userInserted.getId()).isPresent());
 
@@ -62,7 +62,7 @@ class UserServiceIntegrationTest {
     void edit(){
         List<User> users = TestCreationFactory.listOf(User.class);
         String newName = randomString();
-        UserDTO userInserted = userService.create(userMapper.toUserDTO(users.get(0)));
+        UserDTO userInserted = userService.create(userMapper.toUserDTO(users.get(0)), "secretary");
 
         UserDTO userMinimalDTO = UserDTO.builder()
                 .id(userInserted.getId())

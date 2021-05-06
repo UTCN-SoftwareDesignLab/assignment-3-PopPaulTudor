@@ -1,6 +1,7 @@
 package com.lab4.demo.user.model;
 
 public enum ERole {
-    REG_USER,
+    SECRETARY,
+    DOCTOR,
     ADMIN
 }

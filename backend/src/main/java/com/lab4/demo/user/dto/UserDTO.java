@@ -29,6 +29,7 @@ public class UserDTO {
     @Builder.Default
     private String password = "";
 
+
     @Builder.Default
     private Set<Role> role =  new HashSet<>();
 

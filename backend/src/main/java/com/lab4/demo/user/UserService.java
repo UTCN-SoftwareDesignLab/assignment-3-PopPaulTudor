@@ -1,8 +1,10 @@
 package com.lab4.demo.user;
 
+import com.lab4.demo.consultation.ConsultationRepository;
 import com.lab4.demo.user.dto.UserDTO;
 import com.lab4.demo.user.dto.UserMinimalDTO;
 import com.lab4.demo.user.mapper.UserMapper;
+import com.lab4.demo.user.model.ERole;
 import com.lab4.demo.user.model.Role;
 import com.lab4.demo.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.lab4.demo.user.model.ERole.REG_USER;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -22,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ConsultationRepository consultationRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder encoder;
 
@@ -42,7 +45,7 @@ public class UserService {
                 .collect(toList());
     }
 
-    public List<UserDTO> allUsersForList() {
+    public List<UserDTO> allUsers() {
         List<UserDTO> collect = userRepository.findAll()
                 .stream().map(userMapper::toUserDTO)
                 .collect(toList());
@@ -54,11 +57,11 @@ public class UserService {
         userRepository.deleteById((id));
     }
 
-    public UserDTO create(UserDTO userDTO) {
+    public UserDTO create(UserDTO userDTO, String pickedRole) {
 
         User user = userMapper.fromUserDTO(userDTO);
         Set<Role> set = new HashSet<>();
-        Role role = Role.builder().name(REG_USER).build();
+        Role role = Role.builder().name(ERole.valueOf(pickedRole)).build();
         set.add(role);
         user.setRoles(set);
         user.setPassword(encoder.encode(user.getPassword()));
@@ -76,5 +79,17 @@ public class UserService {
             user.setPassword(encoder.encode(userDTO.getPassword()));
 
         return userMapper.toUserDTO(userRepository.save(user));
+    }
+
+    public List<UserDTO> findAvailableDoctors(long timeSlot){
+        List<UserDTO> availableDoctors = new ArrayList<>();
+
+        Role role = Role.builder().name(ERole.valueOf("doctor")).build();
+        for(User user: userRepository.findAllByRolesContaining(role))
+            if(consultationRepository.findByDoctorIdAndTimeOfConsultation(user.getId(), timeSlot).isEmpty())
+                availableDoctors.add(userMapper.toUserDTO(user));
+
+
+        return availableDoctors;
     }
 }

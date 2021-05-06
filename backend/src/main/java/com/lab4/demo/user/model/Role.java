@@ -21,5 +21,5 @@ public class Role {
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     @Builder.Default
-    private ERole name = ERole.REG_USER;
+    private ERole name = ERole.SECRETARY;
 }

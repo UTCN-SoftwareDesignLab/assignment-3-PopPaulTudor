@@ -22,7 +22,7 @@ public class UserController {
 
     @GetMapping()
     public List<UserDTO> allUsers() {
-        return userService.allUsersForList();
+        return userService.allUsers();
     }
 
     @PostMapping

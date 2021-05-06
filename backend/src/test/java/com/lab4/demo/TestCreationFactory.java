@@ -1,6 +1,8 @@
 package com.lab4.demo;
 
 
+import com.lab4.demo.consultation.model.Consultation;
+import com.lab4.demo.consultation.model.dto.ConsultationDTO;
 import com.lab4.demo.patient.model.Patient;
 import com.lab4.demo.patient.model.PatientDTO;
 import com.lab4.demo.user.dto.UserListDTO;
@@ -38,6 +40,12 @@ public class TestCreationFactory {
             supplier = TestCreationFactory::newPatient;
         } else if (cls.equals(PatientDTO.class)) {
             supplier = TestCreationFactory::newPatientDTO;
+
+        } else if (cls.equals(Consultation.class)) {
+            supplier = TestCreationFactory::newConsultation;
+        } else if (cls.equals(ConsultationDTO.class)) {
+            supplier = TestCreationFactory::newConsultationDTO;
+
         } else {
             supplier = () -> new String("You failed.");
         }
@@ -47,6 +55,27 @@ public class TestCreationFactory {
                 (T) finalSupplier.get()
         ).collect(Collectors.toSet()) // remove duplicates in case of Long for example
                 .stream().collect(toList());
+    }
+
+
+    private static ConsultationDTO newConsultationDTO() {
+        return ConsultationDTO.builder()
+                .id(randomLong())
+                .doctorId(randomLong())
+                .patientId(randomLong())
+                .details(randomString())
+                .timeOfConsultation(randomLong())
+                .build();
+    }
+
+    private static Consultation newConsultation() {
+        return Consultation.builder()
+                .id(randomLong())
+                .doctorId(randomLong())
+                .patientId(randomLong())
+                .details(randomString())
+                .timeOfConsultation(randomLong())
+                .build();
     }
 
     private static UserListDTO newUserListDTO() {

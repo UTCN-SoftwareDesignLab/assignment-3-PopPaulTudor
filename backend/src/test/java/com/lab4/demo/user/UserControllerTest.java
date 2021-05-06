@@ -44,7 +44,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void allUsers() throws Exception {
         List<UserDTO> userDTOS = TestCreationFactory.listOf(UserListDTO.class);
-        when(userService.allUsersForList()).thenReturn(userDTOS);
+        when(userService.allUsers()).thenReturn(userDTOS);
 
         ResultActions result = mockMvc.perform(get(USERS));
         result.andExpect(status().isOk())
@@ -61,7 +61,7 @@ class UserControllerTest extends BaseControllerTest {
                 .id(randomLong())
                 .build();
 
-        when(userService.create(dto)).thenReturn(dto);
+        when(userService.create(dto,"secretary")).thenReturn(dto);
 
         ResultActions result = performPostWithRequestBody(USERS, dto);
         result.andExpect(status().isOk())
