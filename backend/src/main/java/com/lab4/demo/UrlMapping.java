@@ -18,5 +18,7 @@ public class UrlMapping {
     public static final String CONSULTATIONS = "/consultations";
     public static final String DOCTORS = "/doctors";
 
+    public static final String CHAT = "/chat";
+
 
 }

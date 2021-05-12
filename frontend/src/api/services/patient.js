@@ -1,31 +1,31 @@
 import authHeader, { BASE_URL, HTTP } from "../http";
 
 export default {
-  allUsers() {
-    return HTTP.get(BASE_URL + "/users", {
+  allPatients() {
+    return HTTP.get(BASE_URL + "/patient", {
       headers: authHeader(),
     }).then((response) => {
       return response.data;
     });
   },
 
-  createUser(user) {
-    return HTTP.post(BASE_URL + "/users", user, { headers: authHeader() }).then(
-      (response) => {
-        return response.data;
-      }
-    );
+  createPatients(patient) {
+    return HTTP.post(BASE_URL + "/patient", patient, {
+      headers: authHeader(),
+    }).then((response) => {
+      return response.data;
+    });
   },
-  editUser(user) {
-    return HTTP.patch(BASE_URL + "/users/" + user.id, user, {
+  editPatients(patient) {
+    return HTTP.patch(BASE_URL + "/patient/" + patient.id, patient, {
       headers: authHeader(),
     }).then((response) => {
       return response.data;
     });
   },
 
-  deleteUser(user) {
-    return HTTP.delete(BASE_URL + "/users/" + user.id, {
+  deletePatients(patient) {
+    return HTTP.delete(BASE_URL + "/patient/" + patient.id, {
       headers: authHeader(),
     }).then(
       (response) => {

@@ -48,7 +48,7 @@ public class AuthService {
             roles.add(defaultRole);
         } else {
             rolesStr.forEach(r -> {
-                Role ro = roleRepository.findByName(ERole.valueOf(r))
+                Role ro = roleRepository.findByName(ERole.valueOf(r.toUpperCase()))
                         .orElseThrow(() -> new RuntimeException("Cannot find role: " + r));
                 roles.add(ro);
             });

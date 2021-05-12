@@ -3,13 +3,24 @@ package com.lab4.demo.consultation;
 
 import com.lab4.demo.consultation.model.Consultation;
 import com.lab4.demo.consultation.model.dto.ConsultationDTO;
+import com.lab4.demo.user.UserRepository;
+import com.lab4.demo.user.model.ERole;
+import com.lab4.demo.user.model.Role;
+import com.lab4.demo.user.model.User;
+import com.lab4.demo.websocket.model.Message;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
+import static com.lab4.demo.UrlMapping.CHAT;
+import static com.lab4.demo.UrlMapping.ENTITY;
 import static java.util.stream.Collectors.toList;
 
 
@@ -19,6 +30,7 @@ public class ConsultationService {
 
     private final ConsultationRepository consultationRepository;
     private final ConsultationMapper consultationMapper;
+    private final UserRepository userRepository;
 
 
     private Consultation findById(Long id) {
@@ -26,21 +38,10 @@ public class ConsultationService {
                 .orElseThrow(() -> new EntityNotFoundException("Consultation not found: " + id));
     }
 
-    private List<Consultation> findByDoctorId(Long doctorId) {
-        List<Consultation> consultations = consultationRepository.findByDoctorId(doctorId);
-
-        return consultations;
-    }
 
     public List<ConsultationDTO> findAll() {
         return consultationRepository.findAll().stream()
                 .map(consultationMapper::toDto).collect(toList());
-    }
-
-
-    private List<Consultation> findByPatientId(Long doctorId) {
-
-        return consultationRepository.findByPatientId(doctorId);
     }
 
     public Optional<ConsultationDTO> create(ConsultationDTO consultationDTO) {
@@ -67,6 +68,35 @@ public class ConsultationService {
 
     public void delete(Long id) {
         consultationRepository.deleteById((id));
+
+    }
+
+
+    @Scheduled(fixedRate = 3000)
+    public void sendMessage(SimpMessagingTemplate simpMessagingTemplate) {
+        long oneHour = 3600000L;
+        long time;
+        List<Consultation> consultations;
+
+        Role role = Role.builder().name(ERole.DOCTOR).build();
+        List<User> doctors = userRepository.findAllByRolesContaining(role);
+
+        for (User doctor : doctors) {
+            time = Calendar.getInstance().getTimeInMillis() - oneHour;
+            consultations = consultationRepository.findByDoctorIdAndTimeOfConsultation(doctor.getId(), time);
+
+            for (Consultation consultation : consultations) {
+                Message message = Message.builder()
+                        .title("You have an upcoming consultation with " + consultation.getId())
+                        .text(consultation.getDetails())
+                        .build();
+
+                simpMessagingTemplate.convertAndSend(CHAT + ENTITY, message);
+
+
+            }
+
+        }
 
     }
 }

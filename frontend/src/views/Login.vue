@@ -33,6 +33,18 @@
                 v-model="login.password"
                 validate-on-blur
               ></v-text-field>
+
+              <label>
+                <select
+                  v-model="login.roles"
+                  multiple
+                  v-if="mode === 'register'"
+                >
+                  <option>secretary</option>
+                  <option>doctor</option>
+                  <option>admin</option>
+                </select>
+              </label>
               <v-card-actions>
                 <v-container>
                   <v-layout v-if="inLoginMode" row justify-center>
@@ -78,6 +90,7 @@ export default {
       email: "",
       username: "alex",
       password: "WooHoo1!",
+      roles: ["secretary"],
     },
   }),
   methods: {
